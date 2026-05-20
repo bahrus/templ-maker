@@ -23,9 +23,9 @@ And in order to do that, el-maker needs access to the DOM fragment surrounding i
 NewCtr.seedRef = new WeakRef(scriptEl);
 ```
 
-What this custom element feature does is pull in the HTML DOM Fragment of the parent element -- first checking for a shadow root, and if that isn't there, from a clone of the children not including the seed script element.  It takes careful not of which of the two scenarios above we are in. It does this in the onAssigned static method of the feature.
+What this custom element feature does is pull in the HTML DOM Fragment of the parent element -- first checking for a shadow root, and if that isn't there, from a clone of the children not including the seed script element.  It takes careful note of which of the two scenarios (ShadowDOM/notShadowDOM). It does this in the onAssigned static method of the feature.
 
-The TemplMaker feature class instance  exposes a "clone" getter that starts out as the clone the template created above for each instance.
+The TemplMaker feature class instance clones the template and by default sets the host element's clone property to the clone.
 
 It also provides an append method, that appends the clone to the shadowRoot, or to the element itself, depending on what scenario was noted for the initial "seed" live DOM fragment.
 
