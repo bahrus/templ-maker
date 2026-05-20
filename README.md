@@ -29,3 +29,14 @@ The TemplMaker feature class instance clones the template and by default sets th
 
 It also provides an append method, that appends the clone to the shadowRoot, or to the element itself, depending on what scenario was noted for the initial "seed" live DOM fragment.
 
+
+
+1. Install git
+2. Fork/clone this repo
+3. Install node.js
+4. Open command window to folder where you cloned this repo
+5. > git submodule add https://github.com/bahrus/types.git types
+6. > git submodule update --init --recursive
+7. > npm install
+8. > npm run serve
+9. Open http://localhost:8000/ in a modern browser
