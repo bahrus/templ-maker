@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - TemplateMaker (Light DOM)</title>
+    <!-- #include virtual="/imports.html" -->
+    <script type=module>
+        import 'assign-gingerly/assignFeatures.js';
+        import {TemplateMaker} from 'templ-maker/TemplateMaker.js';
+
+        // Simulate a seed element scenario with light DOM
+        class LightTestElement extends HTMLElement {
+            static supportedFeatures = {
+                templMaker: {
+                    fallbackSpawn: TemplateMaker
+                }
+            };
+
+            constructor() {
+                super();
+            }
+
+            connectedCallback() {
+                // Clone and append the template
+                if (this.templMaker.clone) {
+                    this.templMaker.append();
+                }
+            }
+        }
+
+        // Create a seed instance with light DOM content
+        const seedContainer = document.getElementById('seed-light');
+        const scriptEl = seedContainer.querySelector('script[type="cede"]');
+
+        // Set the seedRef on the constructor (simulating mount-observer behavior)
+        LightTestElement.seedRef = new WeakRef(scriptEl);
+
+        // Inject the feature (onAssigned captures the template)
+        await customElements.assignFeatures(LightTestElement, {
+            templMaker: { spawn: TemplateMaker }
+        });
+
+        customElements.define('light-test-element', LightTestElement);
+    </script>
+</head>
+<body>
+    <h1>TemplateMaker Test - Light DOM</h1>
+
+    <!-- Seed element (first instance with light DOM children) -->
+    <div id="seed-light">
+        <p>Hello from light DOM template!</p>
+        <span>Another child node</span>
+        <script type="cede" data-extends="light-test-element"></script>
+    </div>
+
+    <hr>
+    <h2>New instances (should clone the template):</h2>
+    <light-test-element></light-test-element>
+    <light-test-element></light-test-element>
+</body>
+</html>

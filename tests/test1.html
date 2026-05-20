@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - TemplateMaker (Shadow DOM)</title>
+    <!-- #include virtual="/imports.html" -->
+    <script type=module>
+        import 'assign-gingerly/assignFeatures.js';
+        import {TemplateMaker} from 'templ-maker/TemplateMaker.js';
+
+        // Simulate a seed element scenario with shadow DOM
+        // In real usage, mount-observer's cede script sets NewCtr.seedRef
+        class ShadowTestElement extends HTMLElement {
+            static supportedFeatures = {
+                templMaker: {
+                    fallbackSpawn: TemplateMaker
+                }
+            };
+
+            constructor() {
+                super();
+            }
+
+            connectedCallback() {
+                // Clone and append the template
+                if (this.templMaker.clone) {
+                    this.templMaker.append();
+                }
+            }
+        }
+
+        // Create a seed instance with shadow DOM content
+        const seedContainer = document.getElementById('seed-shadow');
+        const scriptEl = seedContainer.querySelector('script[type="cede"]');
+
+        // Set the seedRef on the constructor (simulating mount-observer behavior)
+        ShadowTestElement.seedRef = new WeakRef(scriptEl);
+
+        // Inject the feature (onAssigned captures the template)
+        await customElements.assignFeatures(ShadowTestElement, {
+            templMaker: { spawn: TemplateMaker }
+        });
+
+        customElements.define('shadow-test-element', ShadowTestElement);
+    </script>
+</head>
+<body>
+    <h1>TemplateMaker Test - Shadow DOM</h1>
+
+    <!-- Seed element (first instance with template) -->
+    <div id="seed-shadow">
+        <template shadowrootmode=open>
+            <style>
+                :host { display: block; border: 1px solid blue; padding: 8px; }
+            </style>
+            <p>Hello from shadow DOM template!</p>
+        </template>
+        <script type="cede" data-extends="shadow-test-element"></script>
+    </div>
+
+    <hr>
+    <h2>New instances (should clone the template):</h2>
+    <shadow-test-element></shadow-test-element>
+    <shadow-test-element></shadow-test-element>
+</body>
+</html>

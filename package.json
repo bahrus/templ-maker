@@ -1,7 +1,7 @@
 {
   "name": "templ-maker",
   "version": "0.0.0",
-  "description": "",
+  "description": "Custom element feature that captures seed DOM fragments as templates and provides cloning/appending",
   "homepage": "https://github.com/bahrus/templ-maker#readme",
   "bugs": {
     "url": "https://github.com/bahrus/templ-maker/issues"
@@ -15,6 +15,13 @@
   "type": "module",
   "main": "TemplateMaker.js",
   "scripts": {
-    "test": "playwright test"
+    "serve": "node ./node_modules/spa-ssi/serve.js",
+    "test": "playwright test",
+    "update": "ncu -u && npm install"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "assign-gingerly": "0.0.48",
+    "spa-ssi": "0.0.27"
   }
 }
