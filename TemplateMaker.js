@@ -54,6 +54,9 @@ class TemplateMaker {
     /**
      * Appends the clone to the host element's shadow root (if the template
      * originated from a shadow root) or to the element itself (light DOM).
+     *
+     * After appending, replaces host.clone with the ShadowRoot or the host
+     * element itself so the consumer can continue "updating the clone" conceptually.
      */
     append() {
         const host = this.#hostRef?.deref();
@@ -66,8 +69,10 @@ class TemplateMaker {
                 shadowRoot = host.attachShadow({ mode: 'open' });
             }
             shadowRoot.appendChild(this.#clone);
+            /** @type {any} */ (host).clone = shadowRoot;
         } else {
             host.appendChild(this.#clone);
+            /** @type {any} */ (host).clone = host;
         }
         this.#clone = null;
     }

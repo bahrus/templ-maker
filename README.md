@@ -27,7 +27,11 @@ What this custom element feature does is pull in the HTML DOM Fragment of the pa
 
 The TemplMaker feature class instance clones the template and by default sets the host element's clone property to the clone.
 
-It also provides an append method, that appends the clone to the shadowRoot, or to the element itself, depending on what scenario was noted for the initial "seed" live DOM fragment.
+It also provides an append method, that appends the clone to the shadowRoot, or to the element itself, depending on what scenario was noted for the initial "seed" live DOM fragment.  
+
+## Replacing the clone
+
+It's convenient for the custom element to be thinking, conceptually, "update the clone".  This is in fact what it does as long as the clone property of the custom element really is the clone that templ-maker produced.  But, unfortunately, once that clone has been appended to the shadow root or to the light children, continuing to "update the clone" stops working.  So to keep the concept of "updating the clone" going, the append method should replace the clone property of the hostElement with either the ShadowRoot, or the hostElement itself, depending on where the clone was appended to.
 
 
 
