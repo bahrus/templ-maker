@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.60.0",
-    "assign-gingerly": "0.0.48",
+    "assign-gingerly": "0.0.50",
     "spa-ssi": "0.0.27"
   }
 }
