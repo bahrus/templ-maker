@@ -12,6 +12,11 @@ const templateSym = Symbol.for('templ-maker:template');
 const templateSourceSym = Symbol.for('templ-maker:templateSource');
 
 /**
+ * Symbol key used to store adopted CSSStyleSheets on the constructor.
+ */
+const adoptedSheetsSym = Symbol.for('templ-maker:adoptedStylesheets');
+
+/**
  * TemplateMaker is a custom element feature that captures the initial DOM
  * fragment from a "seed" element (the first instance defined via a cede script),
  * stores it as a template on the constructor, and provides cloning/appending
@@ -69,6 +74,11 @@ class TemplateMaker {
                 shadowRoot = host.attachShadow({ mode: 'open' });
             }
             shadowRoot.appendChild(this.#clone);
+            // Apply adopted stylesheets if any were extracted during onAssigned
+            const sheets = /** @type {CSSStyleSheet[] | undefined} */ (ctr[adoptedSheetsSym]);
+            if (sheets) {
+                shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, ...sheets];
+            }
             /** @type {any} */ (host).clone = shadowRoot;
         } else {
             host.appendChild(this.#clone);

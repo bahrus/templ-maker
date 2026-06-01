@@ -87,3 +87,20 @@ Regular `<style>` elements (without the `adoptedstylesheet` attribute) should co
 ### External Stylesheet Support (Future)
 
 A natural extension would be supporting `<link rel="stylesheet" adoptedstylesheet href="...">` to load external CSS as adopted stylesheets. This would require async handling in `onAssigned` (which is already supported since `assignFeatures` awaits the return value). The fetch + `sheet.replace(text)` pattern would work here.
+
+---
+## Human Response I
+
+What dou think about using a shorter, easier to remember attribute like "adopt"?
+
+### AI Response
+
+Agreed — `adopt` is better. It's concise, reads naturally (`<style adopt>`), and the meaning is unambiguous in the context of shadow DOM. The longer `adoptedstylesheet` is redundant since it's already on a `<style>` element. Updated approach uses `adopt` throughout:
+
+```html
+<style adopt>
+    :host { display: block; color: blue; }
+</style>
+```
+
+Selector becomes: `style[adopt]`
