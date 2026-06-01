@@ -1,6 +1,6 @@
 {
   "name": "templ-maker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Custom element feature that captures seed DOM fragments as templates and provides cloning/appending",
   "homepage": "https://github.com/bahrus/templ-maker#readme",
   "bugs": {
