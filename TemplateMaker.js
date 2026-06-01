@@ -118,6 +118,18 @@ class TemplateMaker {
             for (const node of Array.from(shadowRoot.childNodes)) {
                 template.content.appendChild(node.cloneNode(true));
             }
+            // Extract <style adopt> elements into adopted stylesheets
+            const styleEls = template.content.querySelectorAll('style[adopt]');
+            if (styleEls.length > 0) {
+                const sheets = [];
+                for (const styleEl of styleEls) {
+                    const sheet = new CSSStyleSheet();
+                    sheet.replaceSync(styleEl.textContent);
+                    sheets.push(sheet);
+                    styleEl.remove();
+                }
+                /** @type {any} */ (ctr)[adoptedSheetsSym] = sheets;
+            }
         } else {
             source = 'light';
             // Clone children excluding the seed script element
@@ -132,4 +144,4 @@ class TemplateMaker {
     }
 }
 
-export { TemplateMaker, templateSym, templateSourceSym };
+export { TemplateMaker, templateSym, templateSourceSym, adoptedSheetsSym };
