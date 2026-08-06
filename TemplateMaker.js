@@ -16,6 +16,8 @@ const templateSourceSym = Symbol.for('templ-maker:templateSource');
  */
 const adoptedSheetsSym = Symbol.for('templ-maker:adoptedStylesheets');
 
+const rendered = Symbol.for('templ-maker:rendered');
+
 /**
  * TemplateMaker is a custom element feature that captures the initial DOM
  * fragment from a "seed" element (the first instance defined via a cede script),
@@ -37,6 +39,7 @@ class TemplateMaker {
      * @param {Partial<TemplateMakerProps>} [initVals]
      */
     constructor(hostElement, ctx, initVals) {
+        if ((/** @type {any} */ (hostElement))[rendered]) return;
         this.#hostRef = new WeakRef(hostElement);
         const ctr = /** @type {any} */ (hostElement.constructor);
         const template = /** @type {HTMLTemplateElement | undefined} */ (ctr[templateSym]);
@@ -47,6 +50,10 @@ class TemplateMaker {
         if (initVals) {
             Object.assign(this, initVals);
         }
+    }
+
+    connectedCallback() {
+        this.append();
     }
 
     /**
@@ -138,6 +145,7 @@ class TemplateMaker {
                 template.content.appendChild(node.cloneNode(true));
             }
         }
+        (/** @type {any} */ (parent))[rendered] = true;
 
         /** @type {any} */ (ctr)[templateSym] = template;
         /** @type {any} */ (ctr)[templateSourceSym] = source;
