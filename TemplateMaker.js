@@ -39,10 +39,7 @@ class TemplateMaker {
      * @param {Partial<TemplateMakerProps>} [initVals]
      */
     constructor(hostElement, ctx, initVals) {
-        if ((/** @type {any} */ (hostElement))[rendered]) {
-            (/** @type {any} */ (hostElement)).clone = hostElement.shadowRoot || hostElement;
-            return;
-        }
+        if ((/** @type {any} */ (hostElement))[rendered]) return;
         this.#hostRef = new WeakRef(hostElement);
         const ctr = /** @type {any} */ (hostElement.constructor);
         const template = /** @type {HTMLTemplateElement | undefined} */ (ctr[templateSym]);
@@ -155,7 +152,7 @@ class TemplateMaker {
             }
         }
         
-
+        parent.clone = parent.shadowRoot || parent;
 
 
 
