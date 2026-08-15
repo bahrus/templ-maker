@@ -39,7 +39,10 @@ class TemplateMaker {
      * @param {Partial<TemplateMakerProps>} [initVals]
      */
     constructor(hostElement, ctx, initVals) {
-        if ((/** @type {any} */ (hostElement))[rendered]) return;
+        if ((/** @type {any} */ (hostElement))[rendered]) {
+            (/** @type {any} */ (hostElement)).clone = hostElement.shadowRoot || hostElement;
+            return;
+        }
         this.#hostRef = new WeakRef(hostElement);
         const ctr = /** @type {any} */ (hostElement.constructor);
         const template = /** @type {HTMLTemplateElement | undefined} */ (ctr[templateSym]);
@@ -113,18 +116,31 @@ class TemplateMaker {
         const parent = scriptEl.parentElement;
         if (!parent) return;
 
-        const template = document.createElement('template');
-        /** @type {TemplateSource} */
-        let source;
-
+        let template = (/** @type{any} **/(scriptEl))[Symbol.for('imp-h:template')] || (/** @type{any} **/(scriptEl))[Symbol.for('pipe-in:template')];
+        
+        
         // Check for shadow root first
-        const shadowRoot = parent.shadowRoot;
-        if (shadowRoot) {
-            source = 'shadow';
-            // Clone shadow root contents into the template
-            for (const node of Array.from(shadowRoot.childNodes)) {
-                template.content.appendChild(node.cloneNode(true));
+        const {shadowRoot} = parent;
+        /** @type {TemplateSource} */
+        const source = shadowRoot ? 'shadow': 'light'
+        if(!template){
+            template = document.createElement('template');
+            if (shadowRoot) {
+                // Clone shadow root contents into the template
+                for (const node of Array.from(shadowRoot.childNodes)) {
+                    template.content.appendChild(node.cloneNode(true));
+                }
+
+            } else {
+                // Clone children excluding the seed script element
+                for (const node of Array.from(parent.childNodes)) {
+                    if (node === scriptEl) continue;
+                    template.content.appendChild(node.cloneNode(true));
+                }
             }
+        }
+
+        if(shadowRoot){
             // Extract <style adopt> elements into adopted stylesheets
             const styleEls = template.content.querySelectorAll('style[adopt]');
             if (styleEls.length > 0) {
@@ -137,14 +153,12 @@ class TemplateMaker {
                 }
                 /** @type {any} */ (ctr)[adoptedSheetsSym] = sheets;
             }
-        } else {
-            source = 'light';
-            // Clone children excluding the seed script element
-            for (const node of Array.from(parent.childNodes)) {
-                if (node === scriptEl) continue;
-                template.content.appendChild(node.cloneNode(true));
-            }
         }
+        
+
+
+
+
         (/** @type {any} */ (parent))[rendered] = true;
 
         /** @type {any} */ (ctr)[templateSym] = template;
